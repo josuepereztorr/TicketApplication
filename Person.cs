@@ -10,5 +10,10 @@ namespace TicketApplication
             FirstName = firstName;
             LastName = lastName;
         }
+
+        public override string ToString()
+        {
+            return $"{FirstName} {LastName}";
+        }
     }
 }
