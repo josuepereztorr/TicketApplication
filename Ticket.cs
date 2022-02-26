@@ -5,7 +5,7 @@ namespace TicketApplication
 {
     public class Ticket
     {
-        //TicketID, Summary, Status, Priority, Submitter, Assigned, Watching
+
         private Guid _ticketId;
         public string Summary { get; set; }
         public Status Status { get; set; }
@@ -16,7 +16,7 @@ namespace TicketApplication
 
         public Ticket(string summary)
         {
-            _ticketId = new Guid();
+            _ticketId = Guid.NewGuid();
             Summary = summary;
         }
 
