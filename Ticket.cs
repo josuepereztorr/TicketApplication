@@ -62,5 +62,11 @@ namespace TicketApplication
         {
             return _watching;
         }
+
+        public override string ToString()
+        {
+            return
+                $"{GetGuid()},{Summary},{Status},{Priority},{GetSubmitter()},{GetAssigned()},{string.Join("|", GetWatchers())}";
+        }
     }
 }
