@@ -12,17 +12,22 @@ namespace TicketApplication
         public Priority Priority { get; set; }
         private Person _submitter;
         private Person _assigned;
-        private readonly List<Person> _watching = new List<Person>();
+        private readonly List<Person> _watching;
 
-        public Ticket(string summary)
+        public Ticket(string summary, Status status, Priority priority, Person submitter, Person assigned, List<Person> watching)
         {
             _ticketId = Guid.NewGuid();
             Summary = summary;
+            Status = status;
+            Priority = priority;
+            _submitter = submitter;
+            _assigned = assigned;
+            _watching = watching;
         }
 
-        public string GetGuid()
+        public Guid GetGuid()
         {
-            return _ticketId.ToString();
+            return _ticketId;
         }
 
         public void SetSubmitter(string firstName, string lastName)
