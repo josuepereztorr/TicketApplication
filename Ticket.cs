@@ -5,68 +5,49 @@ namespace TicketApplication
 {
     public class Ticket
     {
-
-        private Guid _ticketId;
-        public string Summary { get; set; }
-        public Status Status { get; set; }
-        public Priority Priority { get; set; }
-        private Person _submitter;
-        private Person _assigned;
-        private readonly List<Person> _watching;
-
-        public Ticket(string summary, Status status, Priority priority, Person submitter, Person assigned, List<Person> watching)
-        {
-            _ticketId = Guid.NewGuid();
-            Summary = summary;
-            Status = status;
-            Priority = priority;
-            _submitter = submitter;
-            _assigned = assigned;
-            _watching = watching;
-        }
-
-        public Guid GetGuid()
-        {
-            return _ticketId;
-        }
-
-        public void SetSubmitter(string firstName, string lastName)
-        {
-            Person submitter = new Person(firstName, lastName);
-            _submitter = submitter;
-        }
-
-        public Person GetSubmitter()
-        {
-            return _submitter;
-        }
-
-        public void SetAssigned(string firstName, string lastName)
-        {
-            Person assigned = new Person(firstName, lastName);
-            _assigned = assigned;
-        }
-
-        public Person GetAssigned()
-        {
-            return _assigned;
-        }
+        // FIELDS
+        // unique Ticket ID 
+        private readonly Guid _ticketId = Guid.NewGuid();
+        // description of ticket 
+        private readonly string _summary;
+        // ticket Status
+        private readonly Status _status;
+        // ticket Priority
+        private readonly Priority _priority;
+        // Submit To 
+        private readonly Person _submitter;
+        // Assign To 
+        private readonly Person _assigned;
+        // Persons currently watching the ticket 
+        private readonly List<Person> _watching = new List<Person>();
         
-        public void AddWatcher(string firstName, string lastName)
+        // creates a new ticket given the summary, status, priority, submitter, and assigner 
+        public Ticket(string summary, Status status, Priority priority, Person submitter, Person assigned)
         {
-            Person watcher = new Person(firstName, lastName);
+            //_ticketId = Guid.NewGuid();
+            _summary = summary;
+            _status = status;
+            _priority = priority;
+            _submitter = submitter;
+            _assigned = assigned;
+        }
+
+        // adds people to watch the ticket 
+        public void AddWatcher(Person watcher)
+        {
             _watching.Add(watcher);
         }
 
-        public List<Person> GetWatchers()
+        public string GetTicketId()
         {
-            return _watching;
+            return _ticketId.ToString();
         }
 
         public override string ToString()
         {
             return
-                $"{GetGuid()},{Summary},{Status},{Priority},{GetSubmitter()},{GetAssigned()},{string.Join("|", GetWatchers())}";
+                $"{_ticketId},{_summary},{_status},{_priority},{_submitter},{_assigned},{string.Join("|", _watching)}";
         }
     }
+    
 }

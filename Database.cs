@@ -1,16 +1,22 @@
 using System.Collections.Generic;
+using System.IO;
 
 namespace TicketApplication
 {
     public class Database
     {
-        private List<Ticket> _tickets= new List<Ticket>();
+        // List of ticket objects from our database 
+        private List<Ticket> _tickets;
+        
 
-        public List<Ticket> GetTicket()
+        // constructor that initially reads the file and return all tickets (if it exists)
+        public Database()
         {
-            return _tickets;
+            _tickets = new List<Ticket>();
         }
+        
 
+        // adds a ticket to the database
         public void AddTicket(Ticket ticket)
         {
             _tickets.Add(ticket);

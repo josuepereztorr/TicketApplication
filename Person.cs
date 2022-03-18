@@ -2,18 +2,19 @@ namespace TicketApplication
 {
     public class Person
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        // first name and last name 
+        private readonly string _firstName;
+        private readonly string _lastName;
 
         public Person(string firstName, string lastName)
         {
-            FirstName = firstName;
-            LastName = lastName;
+            _firstName = firstName;
+            _lastName = lastName;
         }
 
         public override string ToString()
         {
-            return $"{FirstName} {LastName}";
+            return $"{_firstName} {_lastName}";
         }
     }
 }
