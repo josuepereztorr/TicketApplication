@@ -3,50 +3,120 @@ using System.Collections.Generic;
 
 namespace TicketApplication
 {
-    public class Ticket
+    public abstract class Ticket
     {
         // FIELDS
         // unique Ticket ID 
-        private readonly Guid _ticketId = Guid.NewGuid();
+        public Guid TicketId { get; set; }
         // description of ticket 
-        private readonly string _summary;
+        public string Summary { get; set; }
         // ticket Status
-        private readonly Status _status;
+        public Status Status { get; set; }
         // ticket Priority
-        private readonly Priority _priority;
+        public Priority Priority { get; set; }
         // Submit To 
-        private readonly Person _submitter;
+        public Person Submitter { get; set; }
         // Assign To 
-        private readonly Person _assigned;
+        public Person Assigned { get; set; }
+
         // Persons currently watching the ticket 
-        private readonly List<Person> _watching = new List<Person>();
+        public List<Person> Watching { get; set; }
         
-        // creates a new ticket given the summary, status, priority, submitter, and assigner 
-        public Ticket(string summary, Status status, Priority priority, Person submitter, Person assigned)
+        public Ticket()
         {
-            //_ticketId = Guid.NewGuid();
-            _summary = summary;
-            _status = status;
-            _priority = priority;
-            _submitter = submitter;
-            _assigned = assigned;
+            TicketId = Guid.NewGuid();
+            Watching = new List<Person>();
         }
 
         // adds people to watch the ticket 
         public void AddWatcher(Person watcher)
         {
-            _watching.Add(watcher);
+            Watching.Add(watcher);
         }
 
         public string GetTicketId()
         {
-            return _ticketId.ToString();
+            return TicketId.ToString();
         }
 
+        public new virtual string ToString()
+        {
+            return
+                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)}";
+        }
+    }
+
+    public class Defect : Ticket
+    {
+        public Severity Severity { get; }
+        
+        //creates a new ticket given the summary, status, priority, submitter, and assigner 
+        public Defect(string summary, Status status, Priority priority, Person submitter, Person assigned, Severity severity)
+        {
+            Summary = summary;
+            Status = status;
+            Priority = priority;
+            Submitter = submitter;
+            Assigned = assigned;
+            Severity = severity;
+        }
+        
         public override string ToString()
         {
             return
-                $"{_ticketId},{_summary},{_status},{_priority},{_submitter},{_assigned},{string.Join("|", _watching)}";
+                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Severity}";
+        }
+    }
+
+    public class Enhancement : Ticket
+    {
+        public string Software { get; }
+        public float Cost { get; }
+        public string Reason { get; }
+        public float Estimate { get; }
+        
+        //creates a new ticket given the summary, status, priority, submitter, and assigner 
+        public Enhancement(string summary, Status status, Priority priority, Person submitter, Person assigned, string software, float cost, string reason, float estimate)
+        {
+            Summary = summary;
+            Status = status;
+            Priority = priority;
+            Submitter = submitter;
+            Assigned = assigned;
+            Software = software;
+            Cost = cost;
+            Reason = reason;
+            Estimate = estimate;
+        }
+        
+        public override string ToString()
+        {
+            return
+                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Software},{Cost},{Reason},{Estimate}";
+        }
+    }
+
+    public class Task : Ticket
+    {
+        public string ProjectName { get; }
+        public string DueDate { get; }
+
+        //creates a new ticket given the summary, status, priority, submitter, and assigner 
+        public Task(string summary, Status status, Priority priority, Person submitter, Person assigned, string projectName, string dueDate)
+        {
+            Summary = summary;
+            Status = status;
+            Priority = priority;
+            Submitter = submitter;
+            Assigned = assigned;
+            ProjectName = projectName;
+            DueDate = dueDate;
+        }
+        
+        public override string ToString()
+        {
+            return
+                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{ProjectName},{DueDate}";
         }
     }
     
