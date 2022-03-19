@@ -7,7 +7,7 @@ namespace TicketApplication
     {
         // FIELDS
         // unique Ticket ID 
-        public Guid TicketId { get; set; }
+        public Guid Id { get; set; }
         // description of ticket 
         public string Summary { get; set; }
         // ticket Status
@@ -24,7 +24,7 @@ namespace TicketApplication
         
         public Ticket()
         {
-            TicketId = Guid.NewGuid();
+            Id = Guid.NewGuid();
             Watching = new List<Person>();
         }
 
@@ -36,13 +36,13 @@ namespace TicketApplication
 
         public string GetTicketId()
         {
-            return TicketId.ToString();
+            return Id.ToString();
         }
 
         public new virtual string ToString()
         {
             return
-                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)}";
+                $"{Id},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)}";
         }
     }
 
@@ -64,7 +64,7 @@ namespace TicketApplication
         public override string ToString()
         {
             return
-                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Severity}";
+                $"{Id},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Severity}";
         }
     }
 
@@ -92,7 +92,7 @@ namespace TicketApplication
         public override string ToString()
         {
             return
-                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Software},{Cost},{Reason},{Estimate}";
+                $"{Id},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Software},{Cost},{Reason},{Estimate}";
         }
     }
 
@@ -116,7 +116,7 @@ namespace TicketApplication
         public override string ToString()
         {
             return
-                $"{TicketId},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{ProjectName},{DueDate}";
+                $"{Id},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{ProjectName},{DueDate}";
         }
     }
     
