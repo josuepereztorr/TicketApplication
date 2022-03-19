@@ -29,7 +29,7 @@ namespace TicketApplication
             Console.WriteLine("Choose an option:");
             Console.WriteLine("1) Create a Tickets.csv file from data.");
             Console.WriteLine("2) Add a new ticket.");
-            Console.WriteLine("3) Exit");
+            Console.WriteLine("(or press enter to exit)");
             Console.Write("\nSelect an option: ");
 
             switch (Console.ReadLine())
@@ -38,66 +38,13 @@ namespace TicketApplication
                     CreateFileFromEntry();
                     return true;
                 case "2":
-                    NewEntry();
+                    WriteToFile();
                     return true;
                 default:
-                    return true;
+                    CloseProgram();
+                    return false;
             }
         }
-
-        // private static void main()
-        // {
-        //     string file = "Tickets.csv";
-        //     string choice;
-        //     StreamWriter sw;
-        //
-        //     Console.WriteLine("\nTicketing System\n" + new String('-', 16));
-        //
-        //     do
-        //     {
-        //         Console.WriteLine("\n1) Create a Tickets.csv file from data.");
-        //         Console.WriteLine("2) Add a new record.");
-        //         Console.WriteLine("\nOr enter any other key to exit.");
-        //
-        //         choice = Console.ReadLine();
-        //
-        //         if (choice == "1")
-        //         {
-        //             if (!File.Exists(file))
-        //             {
-        //                 Ticket ticket = NewEntry();
-        //                 using (StreamWriter writer = File.AppendText(file))
-        //                 {
-        //                     writer.WriteLine(ticket.ToString());
-        //                     Console.WriteLine(ticket.ToString());
-        //                     Console.WriteLine("File successfully created and record added");
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 Console.WriteLine("\nError: File already exists, to add a new ticket select option #2 in the main menu");
-        //             }
-        //         } else if (choice == "2")
-        //         {
-        //             if (File.Exists(file))
-        //             {
-        //                 Ticket ticket = NewEntry();
-        //                 using (StreamWriter writer = File.AppendText(file))
-        //                 {
-        //                     writer.WriteLine(ticket.ToString());
-        //                     Console.WriteLine(ticket.ToString());
-        //                     Console.WriteLine("File successfully created and record added");
-        //                 }
-        //             }
-        //             else
-        //             {
-        //                 Console.WriteLine("\nError: No file exits, please create a new file in order to add a new ticket.");
-        //             }
-        //         }
-        //     } while (choice is "1" or "2");
-        //     
-        // }
-
         private static void CreateFileFromEntry()
         {
             // if the file does not exist proceed in creation of the file 
@@ -105,9 +52,8 @@ namespace TicketApplication
             {
                 using (StreamWriter writer = File.CreateText(Filename))
                 { 
-                    Ticket ticket = NewEntry();
+                    Ticket ticket = NewEntry(true);
                     writer.WriteLine(ticket.ToString());
-                    Loading(ticket, "Writing to File", 500);
                 }
             }
             else
@@ -122,14 +68,13 @@ namespace TicketApplication
 
         private static void WriteToFile()
         {
-            // if the file does not exist proceed in creation of the file 
-            if (!File.Exists(Filename))
+            // if the file exist proceed in creation of the new ticket
+            if (File.Exists(Filename))
             {
                 using (StreamWriter writer = File.AppendText(Filename))
                 { 
-                    Ticket ticket = NewEntry();
+                    Ticket ticket = NewEntry(true);
                     writer.WriteLine(ticket.ToString());
-                    Loading(ticket, "Writing to File", 500);
                 }
             }
             else
@@ -142,7 +87,7 @@ namespace TicketApplication
             }
         }
 
-        private static Ticket NewEntry()
+        private static Ticket NewEntry(bool writeToFile)
         {
             // clear console and print new entry menu
             Console.Clear();
@@ -229,6 +174,10 @@ namespace TicketApplication
             
             Loading(ticket,$"Creating Ticket", 300);
             Loading(ticket,$"Adding Ticket", 300);
+            if (writeToFile)
+            {
+                Loading(ticket,$"Writing to File", 300);
+            }
             Console.WriteLine($"New Ticket Entry - Add to File\n" + new string('-', 30) + "\n");
             Console.WriteLine("Ticket #" + ticket.GetTicketId());
             Console.WriteLine($"Successfully Added");
@@ -237,6 +186,13 @@ namespace TicketApplication
 
             return ticket;
         }
+
+        private static void CloseProgram()
+        {
+            Console.Clear();
+            Console.WriteLine("\nTicketing Management Application\n" + new string('-', 32) + "\n");
+            Console.WriteLine("Application Successfully Closed..");
+        } 
         
         private static void Loading(Ticket ticket, string message, int milliseconds)
         {
