@@ -59,9 +59,8 @@ namespace TicketApplication
             Priority = priority;
             Submitter = submitter;
             Assigned = assigned;
-            Severity = severity;
         }
-        
+
         public override string ToString()
         {
             return
