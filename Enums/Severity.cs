@@ -1,4 +1,4 @@
-namespace TicketApplication
+namespace TicketApplication.Enums
 {
     public enum Severity
     {
