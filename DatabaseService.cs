@@ -25,10 +25,10 @@ namespace TicketApplication
             switch (Console.ReadLine())
             {
                 case "1":
-                    ValidationCheck();
+                    ValidationCheck("1");
                     return true;
                 case "2":
-                    ValidationCheck();
+                    ValidationCheck("2");
                     return true;
                 default:
                     CloseProgram();
@@ -36,7 +36,7 @@ namespace TicketApplication
             }
         }
 
-        private void ValidationCheck()
+        private void ValidationCheck(string option)
         {
             // Ticket Type
             Console.Clear();
@@ -48,7 +48,7 @@ namespace TicketApplication
             Console.Write("\nSelect an option: ");
             string resp = Console.ReadLine();
             TicketType type = (TicketType) Int32.Parse(resp);
-            string option = resp;
+            //string option = resp;
             
             string file = type switch
             {
@@ -158,7 +158,7 @@ namespace TicketApplication
             {
                 case TicketType.Defect:
                 { 
-                    Defect defect = InitReturn(summary, status, priority, submitter, assigner);
+                    Defect defect = InitDefect(summary, status, priority, submitter, assigner);
                     if (fileExists)
                     {
                         using StreamWriter writer = File.AppendText(Filename.Defects);
@@ -208,13 +208,13 @@ namespace TicketApplication
 
         }
 
-        private Defect InitReturn(string summary, Status status, Priority priority, Person submitter, Person assigner)
+        private Defect InitDefect(string summary, Status status, Priority priority, Person submitter, Person assigner)
         {
             // SEVERITY
             Console.Clear();
             Console.WriteLine("New Ticket Entry - SEVERITY\n" + 
                               new string('-', 27) + "\n" + 
-                              "Choose a severity level: " + 
+                              "Choose a severity level: \n" + 
                               "1) Level 1\n" + "2) Level 2\n" + "3) Level 3\n" + "4) Level 4\n" + "5) Level 5\n ");
             Console.Write("\nSelect an option: ");
             Severity severity = (Severity) Int32.Parse(Console.ReadLine());
