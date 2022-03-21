@@ -9,6 +9,7 @@ namespace TicketApplication.Tickets
         //creates a new ticket given the summary, status, priority, submitter, and assigner 
         public Defect(string summary, Status status, Priority priority, Person submitter, Person assigned, Severity severity)
         {
+            Type = TicketType.Defect;
             Summary = summary;
             Status = status;
             Priority = priority;

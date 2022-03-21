@@ -12,6 +12,7 @@ namespace TicketApplication.Tickets
         //creates a new ticket given the summary, status, priority, submitter, and assigner 
         public Enhancement(string summary, Status status, Priority priority, Person submitter, Person assigned, string software, string cost, string reason, string estimate)
         {
+            Type = TicketType.Enhancement;
             Summary = summary;
             Status = status;
             Priority = priority;
