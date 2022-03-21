@@ -17,7 +17,7 @@ namespace TicketApplication
             Console.Clear();
             Console.WriteLine("\nTicketing Management Application\n" + new string('-', 32) + "\n");
             Console.WriteLine("Choose an option:");
-            Console.WriteLine("1) Create a Tickets.csv file from data.");
+            Console.WriteLine("1) Create a CSV file from data.");
             Console.WriteLine("2) Add a new ticket.");
             Console.WriteLine("(or press enter to exit)");
             Console.Write("\nSelect an option: ");
@@ -25,91 +25,119 @@ namespace TicketApplication
             switch (Console.ReadLine())
             {
                 case "1":
-                    WriteTicket(Filename.Tickets, false);
+                    ValidationCheck();
                     return true;
                 case "2":
-                    WriteTicket(Filename.Tickets,true);
+                    ValidationCheck();
                     return true;
                 default:
                     CloseProgram();
                     return false;
             }
         }
-        
-        //writes a Ticket object to the given filename
-        private void WriteTicket(string filename, bool fileExists)
+
+        private void ValidationCheck()
         {
-            if (!fileExists)
+            // Ticket Type
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - TICKET_TYPE\n" + 
+                              new string('-', 30) + "\n" + 
+                              "Enter ticket summary: " +
+                              "Choose a status option: \n" + 
+                              "1) Defect\n" + "2) Enhancement\n" + "3) Task\n");
+            Console.Write("\nSelect an option: ");
+            string resp = Console.ReadLine();
+            TicketType type = (TicketType) Int32.Parse(resp);
+            string option = resp;
+            
+            string file = type switch
             {
-                if (!File.Exists(filename))
-                {
-                    using StreamWriter writer = File.CreateText(filename);
-                    Ticket ticket = NewEntry();
-                    writer.WriteLine(ticket.ToString());
-                }
-                else
-                {
-                    Console.Clear();
-                    Console.WriteLine($"New Ticket Entry - ERROR\n" + new string('-', 24) + "\n");
-                    Console.WriteLine("File already exists, try to add a new ticket to the created file.");
-                    Console.Write("\nPress enter to continue");
-                    Console.ReadLine();
-                }
-            }
-            else
+                TicketType.Defect => Filename.Defects,
+                TicketType.Enhancement => Filename.Enhancements,
+                TicketType.Task => Filename.Tasks,
+                _ => ""
+            };
+            
+            switch (option)
             {
-                if (File.Exists(filename))
+                // for options 1 the file should not exist
+                case "1":
                 {
-                    using StreamWriter writer = File.AppendText(filename);
-                    Ticket ticket = NewEntry();
-                    writer.WriteLine(ticket.ToString());
+                    if (!File.Exists(file))
+                    {
+                        // set CreateTicket's fileExists to false
+                        CreateTicket(false, type);
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"New Ticket Entry - ERROR\n" + 
+                                          new string('-', 24) + "\n" +
+                                          "File already exists, this ticket will be appended to the created file" + 
+                                          "\nPress enter to continue");
+                        Console.ReadLine();
+                        CreateTicket(true, type);
+                    }
+
+                    break;
                 }
-                else
+                case "2":
                 {
-                    Console.Clear();
-                    Console.WriteLine($"New Ticket Entry - ERROR\n" + new string('-', 24) + "\n");
-                    Console.WriteLine("File does not exists, try to create a new file first.");
-                    Console.Write("\nPress enter to continue");
-                    Console.ReadLine();
+                    if (File.Exists(file))
+                    {
+                        // set CreateTicket's fileExists to false
+                        CreateTicket(true, type);
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        Console.WriteLine($"New Ticket Entry - ERROR\n" + 
+                                          new string('-', 24) + "\n" + 
+                                          "No file exists, a new file will be created form the given data" + 
+                                          "\nPress enter to continue");
+                        Console.ReadLine();
+                        CreateTicket(false, type);
+                    }
+
+                    break;
                 }
             }
         }
 
         // returns a Ticket with all entries 
-        private Ticket NewEntry()
+        private void CreateTicket(bool fileExists, TicketType type)
         {
 
             // SUMMARY 
             Console.Clear();
             Console.WriteLine("New Ticket Entry - SUMMARY\n" + 
-                              new string('-', 26) + "\n" + "Enter ticket summary: ");
+                              new string('-', 26) + "\n");
+            Console.Write("Enter ticket summary: ");
             string summary = Console.ReadLine();
             
             // STATUS
             Console.Clear();
             Console.WriteLine("New Ticket Entry - STATUS\n" + 
                               new string('-', 25) + "\n" + 
-                              "Choose a status option: " + 
-                              "1) Open\n" + "2) Closed\n" + "3) Pending\n" + "4) Solved\n" + 
-                              "\nSelect an option: ");
-
+                              "Choose a status option: \n" + 
+                              "1) Open\n" + "2) Closed\n" + "3) Pending\n" + "4) Solved\n");
+            Console.Write("\nSelect an option: ");
             Status status = (Status) Int32.Parse(Console.ReadLine());
 
             // PRIORITY
             Console.Clear();
             Console.WriteLine("New Ticket Entry - PRIORITY\n" + 
                               new string('-', 27) + "\n" + 
-                              "Choose a priority level: " + 
-                              "1) Low\n" + "2) Normal\n" + "3) High\n" + "4) Critical\n" +
-                              "\nSelect an option: ");
-
+                              "Choose a priority level: \n" + 
+                              "1) Low\n" + "2) Normal\n" + "3) High\n" + "4) Critical\n");
+            Console.Write("\nSelect an option: ");
             Priority priority = (Priority) Int32.Parse(Console.ReadLine());
 
             // SUBMITTER
             Console.Clear();
             Console.WriteLine("New Ticket Entry - SUBMITTER\n" + 
-                              new string('-', 28) + "\n" + 
-                              "Submitter first name: ");
+                              new string('-', 28) + "\n");
+            Console.Write("Submitter first name: ");
             string firstName = Console.ReadLine();
             Console.Write("Submitter last name: ");
             string lastName = Console.ReadLine();
@@ -118,25 +146,149 @@ namespace TicketApplication
             // ASSIGNER 
             Console.Clear();
             Console.WriteLine("New Ticket Entry - ASSIGNER\n" + 
-                              new string('-', 27) + "\n" + 
-                              "Assigner first name: ");
+                              new string('-', 27) + "\n");
+            Console.Write("Assigner first name: ");
             firstName = Console.ReadLine();
             Console.Write("Assigner last name: ");
             lastName = Console.ReadLine();
             var assigner = new Person(firstName, lastName);
 
+            // refactor: Use generics next time
+            switch (type)
+            {
+                case TicketType.Defect:
+                { 
+                    Defect defect = InitReturn(summary, status, priority, submitter, assigner);
+                    if (fileExists)
+                    {
+                        using StreamWriter writer = File.AppendText(Filename.Defects);
+                        writer.WriteLine(defect.ToString());
+                    }
+                    else
+                    {
+                        using StreamWriter writer = File.CreateText(Filename.Defects);
+                        writer.WriteLine(defect.ToString());
+                    }
+                    LoadingAnimation(defect);
+                    break;
+                }
+                case TicketType.Enhancement:
+                {
+                    Enhancement enhancement = InitEnhancement(summary, status, priority, submitter, assigner);
+                    LoadingAnimation(enhancement);
+                    if (fileExists)
+                    {
+                        using StreamWriter writer = File.AppendText(Filename.Enhancements);
+                        writer.WriteLine(enhancement.ToString());
+                    }
+                    else
+                    {
+                        using StreamWriter writer = File.CreateText(Filename.Enhancements);
+                        writer.WriteLine(enhancement.ToString());
+                    }
+                    break;
+                }
+                case TicketType.Task:
+                {
+                    Task task = InitTask(summary, status, priority, submitter, assigner);
+                    LoadingAnimation(task);
+                    if (fileExists)
+                    {
+                        using StreamWriter writer = File.AppendText(Filename.Tasks);
+                        writer.WriteLine(task.ToString());
+                    }
+                    else
+                    {
+                        using StreamWriter writer = File.CreateText(Filename.Tasks);
+                        writer.WriteLine(task.ToString());
+                    }
+                    break;
+                }
+            }
+
+        }
+
+        private Defect InitReturn(string summary, Status status, Priority priority, Person submitter, Person assigner)
+        {
+            // SEVERITY
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - SEVERITY\n" + 
+                              new string('-', 27) + "\n" + 
+                              "Choose a severity level: " + 
+                              "1) Level 1\n" + "2) Level 2\n" + "3) Level 3\n" + "4) Level 4\n" + "5) Level 5\n ");
+            Console.Write("\nSelect an option: ");
+            Severity severity = (Severity) Int32.Parse(Console.ReadLine());
+            
+            Defect defect = new Defect(summary, status, priority, submitter, assigner, severity);
+            AddWatchersToTicket(defect);
+            return defect;
+        }
+
+        private Enhancement InitEnhancement(string summary, Status status, Priority priority, Person submitter, Person assigner)
+        {
+            // SOFTWARE
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - SOFTWARE\n" + 
+                              new string('-', 27) + "\n");
+            Console.Write("Enter software used: ");
+            string software = Console.ReadLine();
+                
+            // COST 
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - COST\n" + 
+                              new string('-', 23) + "\n");
+            Console.Write("Enter cost: $ ");
+            string cost = Console.ReadLine();
+                
+            // REASON
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - REASON\n" + 
+                              new string('-', 24) + "\n");
+            Console.Write("Enter reason: ");
+            string reason = Console.ReadLine();    
+                
+            // ESTIMATE 
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - ESTIMATE\n" + 
+                              new string('-', 27) + "\n");
+            Console.Write("Enter estimate: $ ");
+            string estimate = Console.ReadLine();  
+
+            Enhancement enhancement = new Enhancement(summary, status, priority, submitter, assigner, software, cost, reason, estimate);
+            AddWatchersToTicket(enhancement);
+            return enhancement;
+        }
+
+        private Task InitTask(string summary, Status status, Priority priority, Person submitter, Person assigner)
+        {
+            // PROJECT NAME
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - PROJECT_NAME\n" + 
+                              new string('-', 31) + "\n");
+            Console.Write("Enter the project name: ");
+            string projectName = Console.ReadLine();
+                
+            // DUE DATE 
+            Console.Clear();
+            Console.WriteLine("New Ticket Entry - DUE_DATE\n" + 
+                              new string('-', 27) + "\n");
+            Console.Write("Enter due date (MM/DD/YYYY): ");
+            string dueDate = Console.ReadLine();
+
+            Task task = new Task(summary, status, priority, submitter, assigner, projectName, dueDate);
+            AddWatchersToTicket(task);
+            return task;
+        }
+
+        private void AddWatchersToTicket(Ticket ticket)
+        {
             // WATCHER(S)
             Console.Clear();
             Console.WriteLine("New Ticket Entry - WATCHING\n" + 
                               new string('-', 27) + "\n" +
-                              "Are there any people watching this ticket (y/n)? " + 
-                              "\nSelect an option: ");
+                              "Are there any people watching this ticket (y/n)? ");
+            Console.Write("\nSelect an option: ");
             string choice = Console.ReadLine();
-
-            // if (choice == "n")
-            // {
-            //     return ticket; 
-            // }
             
             while (choice == "y")
             {
@@ -144,39 +296,20 @@ namespace TicketApplication
                 Console.WriteLine("New Ticket Entry - WATCHING\n" + new string('-', 27) + "\n");
                     
                 Console.Write("Watcher first name: ");
-                firstName = Console.ReadLine();
+                string firstName = Console.ReadLine();
                 Console.Write("Watcher last name: ");
-                lastName = Console.ReadLine();
+                string lastName = Console.ReadLine();
                 Person watcher = new Person(firstName, lastName);
-                //ticket.AddWatcher(watcher);
+                ticket.AddWatcher(watcher);
                     
                 Console.WriteLine("\nWant to add another watcher to this ticket (y/n)? ");
                 Console.Write("\nSelect an option: ");
                 choice = Console.ReadLine();
-
+            
             }
+        }
 
-            // --------------------------------------
-            
-            // SEVERITY
-            Console.Clear();
-            Console.WriteLine("New Ticket Entry - SEVERITY\n" + new string('-', 27) + "\n");
-
-            Severity severity = Severity.Level1;
-            Console.WriteLine("Choose a severity level: ");
-            Console.WriteLine("1) Level 1\n" + "2) Level 2\n" + "3) Level 3\n" + "4) Level 4\n" + "5) Level 5\n ");
-            Console.Write("\nSelect an option: ");
-            severity = Console.ReadLine() switch
-            {
-                "1" => Severity.Level1,
-                "2" => Severity.Level2,
-                "3" => Severity.Level3,
-                "4" => Severity.Level4,
-                _ => severity
-            };
-            
-            Defect ticket = new Defect(summary, status, priority, submitter, assigner, severity);
-            
+        private void LoadingAnimation(Ticket ticket) {
             UtilityMethods.Loading(ticket,$"Creating Ticket", 300);
             UtilityMethods.Loading(ticket,$"Adding Ticket", 300);
             UtilityMethods.Loading(ticket,$"Writing to File", 300);
@@ -186,11 +319,8 @@ namespace TicketApplication
             Console.WriteLine($"Successfully Added");
             Console.Write("\nPress enter to continue");
             Console.ReadLine();
-
-            return ticket;
         }
-
-        // prints out ending statement
+        
         private static void CloseProgram()
         {
             Console.Clear();
