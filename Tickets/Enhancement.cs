@@ -5,12 +5,12 @@ namespace TicketApplication.Tickets
     public class Enhancement : Ticket
     {
         public string Software { get; }
-        public float Cost { get; }
+        public string Cost { get; }
         public string Reason { get; }
-        public float Estimate { get; }
+        public string Estimate { get; }
         
         //creates a new ticket given the summary, status, priority, submitter, and assigner 
-        public Enhancement(string summary, Status status, Priority priority, Person submitter, Person assigned, string software, float cost, string reason, float estimate)
+        public Enhancement(string summary, Status status, Priority priority, Person submitter, Person assigned, string software, string cost, string reason, string estimate)
         {
             Summary = summary;
             Status = status;

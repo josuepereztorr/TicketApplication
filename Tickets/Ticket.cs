@@ -9,6 +9,9 @@ namespace TicketApplication.Tickets
         // FIELDS
         // unique Ticket ID 
         public Guid Id { get; set; }
+        // ticket type
+        public TicketType Type { get; set; }
+
         // description of ticket 
         public string Summary { get; set; }
         // ticket Status
