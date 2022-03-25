@@ -27,6 +27,12 @@ namespace TicketApplication.Tickets
         public override string ToString()
         {
             return
+                $"Id: {Id}\nSummary: {Summary}\nStatus: {Status}\nPriority: {Priority}\n Submitter: {Submitter}\nAssigned: {Assigned}\nWatching: {string.Join("|", Watching)}\nSoftware: {Software}\nCost: {Cost}\nReason: {Reason}\nEstimate: {Estimate}";
+        }
+
+        public string ToDatabase()
+        {
+            return
                 $"{Id},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)},{Software},{Cost},{Reason},{Estimate}";
         }
     }

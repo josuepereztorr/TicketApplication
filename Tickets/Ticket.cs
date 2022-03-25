@@ -46,7 +46,7 @@ namespace TicketApplication.Tickets
         public new virtual string ToString()
         {
             return
-                $"{Id},{Summary},{Status},{Priority},{Submitter},{Assigned},{string.Join("|", Watching)}";
+                $"Id: {Id}\nSummary: {Summary}\n Status: {Status}\nPriority: {Priority}\n Submitter{Submitter}\nAssigned: {Assigned}\nWatching{string.Join("|", Watching)}";
         }
     }
 
