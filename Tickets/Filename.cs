@@ -2,8 +2,8 @@ namespace TicketApplication.Tickets
 {
     public static class Filename 
     {
-        public static readonly string Defects = "Tickets.csv";
-        public static readonly string Enhancements = "Enhancements.csv";
-        public static readonly string Tasks = "Tasks.csv";
+        public const string Defects = "Tickets.csv";
+        public const string Enhancements = "Enhancements.csv";
+        public const string Tasks = "Tasks.csv";
     }
 }
