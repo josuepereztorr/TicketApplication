@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TicketApplication.Enums;
 
 namespace TicketApplication.Tickets
@@ -32,7 +33,23 @@ namespace TicketApplication.Tickets
             Watching = new List<Person>();
         }
 
-        // adds people to watch the ticket 
+        public static Person CreatePerson(string person)
+        {
+            string[] name = person.Split(" ");
+            return new Person(name[0], name[1]);
+        }
+
+        public static List<Person> CreateListOfWatchers(string watchers)
+        {
+            List<Person> persons = new List<Person>();
+            watchers.Split("|").ToList().ForEach(w =>
+            {
+                persons.Add(CreatePerson(w));
+            });
+
+            return persons;
+        }
+        
         public void AddWatcher(Person watcher)
         {
             Watching.Add(watcher);

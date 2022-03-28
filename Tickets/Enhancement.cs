@@ -1,3 +1,4 @@
+using System;
 using TicketApplication.Enums;
 
 namespace TicketApplication.Tickets
@@ -23,11 +24,31 @@ namespace TicketApplication.Tickets
             Reason = reason;
             Estimate = estimate;
         }
+
+        public static Enhancement ReadLine(string line)
+        {
+            //TicketID, Summary, Status, Priority, Submitter, Assigned, Watching, Software, Cost, Reason, Estimate
+            string[] properties = line.Split(",");
+            
+            var enhancement = new Enhancement(properties[1], 
+                Enum.Parse<Status>(properties[2]),
+                Enum.Parse<Priority>(properties[3]),
+                Ticket.CreatePerson(properties[4]),
+                Ticket.CreatePerson(properties[5]),
+                properties[7],
+                properties[8],
+                properties[9],
+                properties[10]);
+            
+            enhancement.Id = Guid.Parse(properties[0]);
+            enhancement.Watching = Ticket.CreateListOfWatchers(properties[6]);
+            return enhancement;
+        }
         
         public override string ToString()
         {
             return
-                $"Id: {Id}\nSummary: {Summary}\nStatus: {Status}\nPriority: {Priority}\n Submitter: {Submitter}\nAssigned: {Assigned}\nWatching: {string.Join("|", Watching)}\nSoftware: {Software}\nCost: {Cost}\nReason: {Reason}\nEstimate: {Estimate}";
+                $"Id: {Id}\nType: {Type}\nSummary: {Summary}\nStatus: {Status}\nPriority: {Priority}\nSubmitter: {Submitter}\nAssigned: {Assigned}\nWatching: {string.Join("|", Watching)}\nSoftware: {Software}\nCost: {Cost}\nReason: {Reason}\nEstimate: {Estimate}";
         }
 
         public string ToDatabase()
