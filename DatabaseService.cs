@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using TicketApplication.Enums;
 using TicketApplication.Tickets;
@@ -8,6 +10,7 @@ namespace TicketApplication
 {
     public class DatabaseService
     {
+        private List<Ticket> tickets;
 
         // print menu options
         public bool Menu()
@@ -19,6 +22,8 @@ namespace TicketApplication
             Console.WriteLine("Choose an option:");
             Console.WriteLine("1) Create a CSV file from data.");
             Console.WriteLine("2) Add a new ticket.");
+            Console.WriteLine("3) Search database");
+            //Console.WriteLine("3) Display all movies");
             Console.WriteLine("(or press enter to exit)");
             Console.Write("\nSelect an option: ");
 
@@ -29,6 +34,9 @@ namespace TicketApplication
                     return true;
                 case "2":
                     ValidationCheck("2");
+                    return true;
+                case "3":
+                    ReadFiles();
                     return true;
                 default:
                     CloseProgram();
@@ -48,8 +56,7 @@ namespace TicketApplication
             Console.Write("\nSelect an option: ");
             string resp = Console.ReadLine();
             TicketType type = (TicketType) Int32.Parse(resp);
-            //string option = resp;
-            
+
             string file = type switch
             {
                 TicketType.Defect => Filename.Defects,
@@ -162,12 +169,12 @@ namespace TicketApplication
                     if (fileExists)
                     {
                         using StreamWriter writer = File.AppendText(Filename.Defects);
-                        writer.WriteLine(defect.ToString());
+                        writer.WriteLine(defect.ToDatabase());
                     }
                     else
                     {
                         using StreamWriter writer = File.CreateText(Filename.Defects);
-                        writer.WriteLine(defect.ToString());
+                        writer.WriteLine(defect.ToDatabase());
                     }
                     LoadingAnimation(defect);
                     break;
@@ -179,12 +186,12 @@ namespace TicketApplication
                     if (fileExists)
                     {
                         using StreamWriter writer = File.AppendText(Filename.Enhancements);
-                        writer.WriteLine(enhancement.ToString());
+                        writer.WriteLine(enhancement.ToDatabase());
                     }
                     else
                     {
                         using StreamWriter writer = File.CreateText(Filename.Enhancements);
-                        writer.WriteLine(enhancement.ToString());
+                        writer.WriteLine(enhancement.ToDatabase());
                     }
                     break;
                 }
@@ -195,12 +202,12 @@ namespace TicketApplication
                     if (fileExists)
                     {
                         using StreamWriter writer = File.AppendText(Filename.Tasks);
-                        writer.WriteLine(task.ToString());
+                        writer.WriteLine(task.ToDatabase());
                     }
                     else
                     {
                         using StreamWriter writer = File.CreateText(Filename.Tasks);
-                        writer.WriteLine(task.ToString());
+                        writer.WriteLine(task.ToDatabase());
                     }
                     break;
                 }
@@ -278,6 +285,160 @@ namespace TicketApplication
             Task task = new Task(summary, status, priority, submitter, assigner, projectName, dueDate);
             AddWatchersToTicket(task);
             return task;
+        }
+        
+        public void ReadFiles()
+        {
+            List<Ticket> readFiles = new List<Ticket>();
+            IEnumerable<Ticket> searchResults; 
+
+            if (!File.Exists(Filename.Defects) && !File.Exists(Filename.Enhancements) && !File.Exists(Filename.Tasks))
+            {
+                Console.Clear();
+                Console.WriteLine($"Ticket Search - ERROR\n" + 
+                                  new string('-', 24) + "\n" + 
+                                  "No marches found, or no tickets have been created" + 
+                                  "\nPress enter to return to main menu");
+                Console.ReadLine();
+            }
+
+            if (File.Exists(Filename.Defects))
+            {
+                StreamReader streamReader = new StreamReader(Filename.Defects);
+
+                while (!streamReader.EndOfStream)
+                {
+                    string line = streamReader.ReadLine();
+                    readFiles.Add(Defect.ReadLine(line));
+                }
+            } 
+            
+            if (File.Exists(Filename.Enhancements))
+            {
+                StreamReader streamReader = new StreamReader(Filename.Enhancements);
+
+                while (!streamReader.EndOfStream)
+                {
+                    string line = streamReader.ReadLine();
+                    readFiles.Add(Enhancement.ReadLine(line));
+                }
+            } 
+            
+            if (File.Exists(Filename.Tasks))
+            {
+                StreamReader streamReader = new StreamReader(Filename.Tasks);
+
+                while (!streamReader.EndOfStream)
+                {
+                    string line = streamReader.ReadLine();
+                    readFiles.Add(Task.ReadLine(line));
+                }
+            }
+
+            // SEARCH PROMPT
+            Console.Clear();
+            Console.WriteLine("Search ticket database - SEARCH\n" + 
+                              new string('-', 31) + "\n" + 
+                              "Choose a an option : \n" + 
+                              "1) Status\n" + "2) Priority\n" + "3) Submitter\n");
+            Console.Write("\nSelect an option: ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                {
+                    // STATUS
+                    Console.Clear();
+                    Console.WriteLine("Search by status - STATUS\n" + 
+                                      new string('-', 25) + "\n" + 
+                                      "Choose a Status option : \n" + 
+                                      "1) Open\n" + "2) Closed\n" + "3) Pending\n" + "4) Solved\n");
+                    Console.Write("\nSelect an option: ");
+                    Status status = (Status) Int32.Parse(Console.ReadLine());
+                
+                    searchResults = readFiles.Where(ticket => ticket.Status == status);
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    
+                    foreach (var searchResult in searchResults)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine(searchResult.ToString());
+                        Console.WriteLine();
+                    }
+
+                    Console.WriteLine($"{searchResults.Count()} matches found");
+                    Console.WriteLine();
+                    Console.Write("\nPress enter to continue");
+                    Console.ReadLine();
+                    
+                    Console.ResetColor();
+
+                    break;
+                }
+                case "2":
+                {
+                    // PRIORITY
+                    Console.Clear();
+                    Console.WriteLine("New Ticket Entry - PRIORITY\n" + 
+                                      new string('-', 27) + "\n" + 
+                                      "Choose a priority level: \n" + 
+                                      "1) Low\n" + "2) Normal\n" + "3) High\n" + "4) Critical\n");
+                    Console.Write("\nSelect an option: ");
+                    Priority priority = (Priority) Int32.Parse(Console.ReadLine());
+                
+                    searchResults = readFiles.Where(ticket => ticket.Priority == priority);
+                    
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    foreach (var searchResult in searchResults)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine(searchResult.ToString());
+                        Console.WriteLine();
+                    }
+                    
+                    Console.WriteLine($"{searchResults.Count()} matches found");
+                    Console.WriteLine();
+                    Console.Write("\nPress enter to continue");
+                    Console.ReadLine();
+                    Console.ResetColor();
+
+                    break;
+                }
+                case "3":
+                {
+                    // SUBMITTER
+                    Console.Clear();
+                    Console.WriteLine("New Ticket Entry - SUBMITTER\n" + 
+                                      new string('-', 28) + "\n");
+                    Console.Write("Submitter first name: ");
+                    string firstName = Console.ReadLine();
+                    Console.Write("Submitter last name: ");
+                    string lastName = Console.ReadLine();
+                    var submitter = new Person(firstName, lastName);
+                
+                    searchResults = readFiles.Where(ticket => ticket.Submitter == submitter);
+                    
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    
+                    foreach (var searchResult in searchResults)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine(searchResult.ToString());
+                        Console.WriteLine();
+                    }
+                    
+                    Console.WriteLine($"{searchResults.Count()} matches found");
+                    Console.WriteLine();
+                    Console.Write("\nPress enter to continue");
+                    Console.ReadLine();
+                    Console.ResetColor();
+
+                    break;
+                }
+            }
         }
 
         private void AddWatchersToTicket(Ticket ticket)
